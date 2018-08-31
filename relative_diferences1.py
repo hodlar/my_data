@@ -15,7 +15,7 @@ for i in range(size):
     zeros.append(0)
 
 
-with open('H_25000.dat') as f:
+with open('H_10000.dat') as f:
     array = [[float(x) for x in line.split()] for line in f]
 
 z2 = []
@@ -26,7 +26,7 @@ for i in range(size):
     h2.append(array[i][1])
 
 
-with open('H_2500000.dat') as f:
+with open('H_25000.dat') as f:
     array = [[float(x) for x in line.split()] for line in f]
 
 z3 = []
@@ -36,7 +36,7 @@ for i in range(size):
     z3.append(array[i][0])
     h3.append(array[i][1])
 
-with open('H_250000000000.dat') as f:
+with open('H_40000.dat') as f:
     array = [[float(x) for x in line.split()] for line in f]
 
 z4 = []
