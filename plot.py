@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import math
 import numpy
 import string
+import sys
 
 # Utilities for reading column-oriented files
 #
@@ -241,16 +242,14 @@ def fgetcols(cfile,*args,**keywords):
         ret = ret + [getcol(colnumbers[i],l,N,fs=fs)]
     return ret
 
-
-file0 = 'H_0.dat'
-file1 = 'H_90000000.dat'
-file2 = 'H_130000000.dat'
-file3 = 'H_250000000.dat'
+atom = sys.argv[1]
+file0 = '0/' + atom + '.dat'
+file1 = '15000/' + atom +'.dat'
+file2 = '90000000/' + atom +'.dat'
+file3 = '200000000/' + atom +'.dat'
 field1 = '?G'
 field2 = '?G'
 field3 = '?G'
-
-
 
 z,h0 = fgetcols(file0)
 z,h1 = fgetcols(file1)
@@ -274,8 +273,8 @@ plt.figure(num='densidades')
 plt.xlabel('Z')
 plt.ylabel('Density')
 plt.plot(z, h0, 'm--', label='0G')
-#plt.plot(z, h1, 'r--', label = field1)
-#plt.plot(z, h2, 'g--', label = field2)
+plt.plot(z, h1, 'r--', label = field1)
+plt.plot(z, h2, 'g--', label = field2)
 plt.plot(z, h3, 'b--', label = field3)
 plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0)
 
