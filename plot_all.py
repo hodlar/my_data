@@ -4,9 +4,9 @@ import math
 
 size = int(input("Enter the number of points: "))
 file0 = 'H_0.dat'
-file1 = 'H_10000.dat'
-file2 = 'H_25000.dat'
-file3 = 'H_40000.dat'
+file1 = 'H_90000000.dat'
+file2 = 'H_130000000.dat'
+file3 = 'H_180000000.dat'
 field1 = '150G'
 field2 = '380G'
 field3 = '600G'
