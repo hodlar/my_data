@@ -245,7 +245,7 @@ def fgetcols(cfile,*args,**keywords):
 file0 = 'H_0.dat'
 file1 = 'H_90000000.dat'
 file2 = 'H_130000000.dat'
-file3 = 'H_180000000.dat'
+file3 = 'H_250000000.dat'
 field1 = '?G'
 field2 = '?G'
 field3 = '?G'
@@ -257,11 +257,18 @@ z,h1 = fgetcols(file1)
 z,h2 = fgetcols(file3)
 z,h3 = fgetcols(file3)
 
-z = z[1:30]
-h0 = h0[1:30]
-h1 = h1[1:30]
-h2 = h2[1:30]
-h3 = h3[1:30]
+z = numpy.log(z[1:30]+100)
+h0 = numpy.log(h0[1:30])
+h1 = numpy.log(h1[1:30])
+h2 = numpy.log(h2[1:30])
+h3 = numpy.log(h3[1:30])
+
+#z = numpy.log(numpy.absolute(z[1:30]+1))
+#h0 = numpy.log(numpy.absolute(h0[1:30]+1))
+#h1 = numpy.log(numpy.absolute(h1[1:30]+1))
+#h2 = numpy.log(numpy.absolute(h2[1:30]+1))
+#h3 = numpy.log(numpy.absolute(h3[1:30]+1))
+
 
 plt.figure(num='densidades')
 plt.xlabel('Z')
