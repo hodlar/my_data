@@ -247,9 +247,9 @@ file0 = '0/' + atom + '.dat'
 file1 = '15000/' + atom +'.dat'
 file2 = '90000000/' + atom +'.dat'
 file3 = '200000000/' + atom +'.dat'
-field1 = '?G'
-field2 = '?G'
-field3 = '?G'
+field1 = '1500 - 0'
+field2 = '9000000 - 0'
+field3 = '20k - 0'
 
 z,h0 = fgetcols(file0)
 z,h1 = fgetcols(file1)
@@ -268,9 +268,9 @@ abs3 = h3 - h0
 plt.figure(num='densidades')
 plt.xlabel('Z')
 plt.ylabel('Density')
-plt.plot(z, abs1, 'm--', label='0G')
-plt.plot(z, abs2, 'r--', label = field1)
-plt.plot(z, abs3, 'g--', label = field2)
+plt.plot(z, abs1, 'm--', label=field1)
+plt.plot(z, abs2, 'r--', label = field2)
+#plt.plot(z, abs3, 'g--', label = field3)
 plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0)
 
 plt.show()

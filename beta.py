@@ -242,40 +242,42 @@ def fgetcols(cfile,*args,**keywords):
         ret = ret + [getcol(colnumbers[i],l,N,fs=fs)]
     return ret
 
-atom = sys.argv[1]
-file0 = '0/' + atom + '.dat'
-file1 = '1500000/' + atom +'.dat'
-file2 = '90000000/' + atom +'.dat'
-file3 = '290000000/' + atom +'.dat'
-field1 = '1500000G'
-field2 = '90000000G'
-field3 = '290000000G'
 
-z,h0 = fgetcols(file0)
-z,h1 = fgetcols(file1)
-z,h2 = fgetcols(file2)
-z,h3 = fgetcols(file3)
 
-z = numpy.log(z[1:30]+100)
-h0 = numpy.log(h0[1:30])
-h1 = numpy.log(h1[1:30])
-h2 = numpy.log(h2[1:30])
-h3 = numpy.log(h3[1:30])
+magnitude = sys.argv[1]
+file0 = magnitude + '/T.dat'
+file1 = magnitude + '/H.dat'
+file2 = magnitude + '/magnetic_field.dat'
 
-#z = numpy.log(numpy.absolute(z[1:30]+1))
-#h0 = numpy.log(numpy.absolute(h0[1:30]+1))
-#h1 = numpy.log(numpy.absolute(h1[1:30]+1))
-#h2 = numpy.log(numpy.absolute(h2[1:30]+1))
-#h3 = numpy.log(numpy.absolute(h3[1:30]+1))
+field2 = '?G'
+field3 = '?G'
+
+z,T = fgetcols(file0)
+z2,rho = fgetcols(file1)
+z3,bx,by,bx = fgetcols(file2)
+
+kb = 1.380658e-16
+Pt = rho*T*kb
+Pb = (pow(bx,2) + pow(by,2))/25.13274
+Beta = Pt/Pb
+
+
+z = z[1:60]
+Pt = Pt[1:60]
+Pb = Pb[1:60]
+Beta = Beta[1:60]
+#h3 = h3[1:30]
+print Pt
+print Pb
 
 
 plt.figure(num='densidades')
 plt.xlabel('Z')
-plt.ylabel('Density')
-plt.plot(z, h0, 'm--', label='0G')
-plt.plot(z, h1, 'r--', label = field1)
-plt.plot(z, h2, 'g--', label = field2)
-plt.plot(z, h3, 'b--', label = field3)
+plt.ylabel('Beta')
+plt.plot(z, Beta, 'm--', label='Beta')
+#plt.plot(z, Pt, 'g--', label='Pt')
+#plt.plot(z, Pb, 'r--', label = 'Pb')
+#plt.plot(z, rel3, 'g--', label = field2)
 plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0)
 
 plt.show()
