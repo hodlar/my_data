@@ -4,8 +4,7 @@
 
 #define N_POINTS 10
 #define SIZE 10
-#define R_SOL 1
-#define R_SOL_VAL 695700
+#define R_SOL 695700
 #define sec(x) while(1) {1/cos(x); break;}
 
 typedef struct vector Vector;
@@ -89,7 +88,7 @@ int calculate_vector_position(double *arr, double alpha, double d, Polar_Coordin
 
 int calculate_field_values(Magnetic_Vector magnetic_in, double m, int size){
 	int i;
-	double a, b, b_total;
+	double a, b, b_total, B;
 	Polar_Coordinates *polar_field;
 
 	polar_field = magnetic_in.polar_location;
@@ -102,7 +101,9 @@ int calculate_field_values(Magnetic_Vector magnetic_in, double m, int size){
 			 (m * sin( (polar_field + i)->theta ) ) / pow( (polar_field +i)->r,3);
 		(magnetic_in.polar_field + i)->bp = 0;
 //		printf( "br = %f  bt = %f  \n", (magnetic_in.polar_field+i)->br, (magnetic_in.polar_field+i)->bt );
-//		printf("B = %f\n", pow((magnetic_in.polar_field+i)->br,2), pow((magnetic_in.polar_field+i)->bt,2) );
+
+		B = pow((magnetic_in.polar_field+i)->br,2) + pow((magnetic_in.polar_field+i)->bt,2);
+		printf("B^2 = %f\n", B );
 	}
 
 	//Calculo bx y by
@@ -119,9 +120,9 @@ int calculate_field_values(Magnetic_Vector magnetic_in, double m, int size){
 
 	//Paso valores de r y theta a x, y
 	for(i = 0; i < size; i++){
-		(magnetic_in.location + i)->y = R_SOL_VAL * 
+		(magnetic_in.location + i)->y = 
 			 sin( (polar_field + i)->theta ) * (polar_field +i)->r;
-		(magnetic_in.location + i)->x = R_SOL_VAL * 
+		(magnetic_in.location + i)->x = 
 			 cos( (polar_field + i)->theta ) * (polar_field +i)->r;
 	//	printf( "%f   %f   %i\n", (polar_field+i)->r, (polar_field+i)->theta, i);
 	}
@@ -139,6 +140,31 @@ int create_semicirle(Polar_Coordinates *coordinates, double r_in, int size){
 	return size;
 }
 
+void generate_profiles(double *arr, double alpha, double no, Polar_Coordinates *coordinates, int size, Magnetic_Vector magnetic_in, double si, int min_d, int max_d, int step_d, long int min_m, long int max_m, long int step_m)
+{
+	FILE *out_file;
+	int i, momentum, j, m, d;
+	char filename[50];
+	double B_total;
+	momentum = (int)m;
+	d=R_SOL;
+	max_d += R_SOL;
+
+	for(d += min_d; d <= max_d; d+= step_d)
+	{
+		for(m = min_m; m <= max_m; m += step_m)
+		{
+			sprintf(filename, "datos/m_%i/d_%i.dat", momentum,d);
+			calculate_vector_position(arr, alpha, d, coordinates, size);
+			calculate_field_values(magnetic_in, m, size);
+			out_file = fopen(filename, "w+");
+			print_happy(magnetic_in.location, magnetic_in.cartesian_field, size, &out_file);
+			fclose(out_file);
+		}
+	}
+
+}
+
 
 int main(){
 
@@ -146,40 +172,48 @@ int main(){
 	Magnetic_Vector my_vec;
 	Cartesian_Coordinates x0;
 	int i, stages;
-	double arr[N_POINTS] = {.0017374, .0017874, .0021374, .0024874, .0028374, .0031874, .0035374, .0038874, .0042374, .0045874};
+	double arr[N_POINTS] = {1000, 1100, 1200, 1300, 1400, 1500, 1600, 1900, 2000, 2100};
 	int size = SIZE;
 	double alpha = .0000006;
-	double m = 50;
+	double m = 500000000;
 	FILE *out_file;
-	double d;
+	double d, distance32;
 
-	d = R_SOL+.000937;
+	d = R_SOL;
 
 	/*
 	printf("alpha? ");
 	scanf("%lf", &alpha);
 	*/
 
+
+	scanf("%lf",&distance32);
+	scanf("%lf",&m);
+	d += distance32;
+
+	printf("base_distance = %lf\n", distance32);
 	my_vec.location = (Cartesian_Coordinates*)malloc(2 + size*sizeof(Cartesian_Coordinates));
 	my_vec.polar_location = (Polar_Coordinates*)malloc(2+size*sizeof(Polar_Coordinates));
 	my_vec.cartesian_field = (Field_Values_C*)malloc(2+size*sizeof(Field_Values_C));
 	my_vec.polar_field = (Field_Values_P*)malloc(2+size*sizeof(Field_Values_P));
-	
-	calculate_vector_position(arr, alpha, d, my_vec.polar_location, size);
 
+
+	calculate_vector_position(arr, alpha, d, my_vec.polar_location, size);
 	calculate_field_values(my_vec, m, size);
+
 
 	out_file = fopen("calculated_values.txt", "w+");
 	//Inserta valores del vector
 	print_happy(my_vec.location, my_vec.cartesian_field, size, &out_file);
-
-		printf("Quantity of stages to be displayed? ");
+/*
+	printf("Quantity of stages to be displayed? ");
 	//Esto lo uso para saber cuantos semicirculos quiero
 	scanf("%i", &stages);
-
+*/
+	stages = 0;
 	for(i = 0; i < stages; i++)
 	{
-		create_semicirle(my_vec.polar_location, .0014 + i*.0005, size);
+		create_semicirle(my_vec.polar_location, 1100 + i*200, size);
 		calculate_field_values(my_vec, m, size);
 		print_happy(my_vec.location, my_vec.cartesian_field, size, &out_file);
 	}
