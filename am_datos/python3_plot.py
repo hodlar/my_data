@@ -243,17 +243,21 @@ def fgetcols(cfile,*args,**keywords):
         ret = ret + [getcol(colnumbers[i],l,N,fs=fs)]
     return ret
 
+m_base1 = '25'
+m_base2 = '183'
+m_base3 = '570'
 
 ##Reading data
 atom = sys.argv[1]
 file0 = '0-0/' + atom + '.dat'
-file1 = '500-200/' + atom +'.dat'
-file2 = '1000-200/' + atom +'.dat'
-file3 = '1500-200/' + atom +'.dat'
-field1 = '500G'
-field2 = '1000G'
-field3 = '1500G'
+file1 = m_base1 + '/' + atom +'.dat'
+file2 = m_base2 + '/' + atom +'.dat'
+file3 = m_base3 + '/' + atom +'.dat'
+field1 = '25G'
+field2 = '205G'
+field3 = '570G'
 
+plot_limit = 103
 #Reading each column
 z,h0 = fgetcols(file0)
 z,h1 = fgetcols(file1)
@@ -261,11 +265,11 @@ z,h2 = fgetcols(file2)
 z,h3 = fgetcols(file3)
 
 ##limiting values to significant variants
-zdens = z[1:102]
-h0dens = h0[1:102]
-h1dens = h1[1:102]
-h2dens = h2[1:102]
-h3dens = h3[1:102]
+zdens = z[1:plot_limit]
+h0dens = h0[1:plot_limit]
+h1dens = h1[1:plot_limit]
+h2dens = h2[1:plot_limit]
+h3dens = h3[1:plot_limit]
 
 ##generating density plot
 figure = plt.figure(num='perfil de densidades')
@@ -274,63 +278,57 @@ ax = figure.add_subplot(1, 1, 1)
 plt.xlabel('z [km]')
 plt.ylabel('H [cm-3]')
 plt.plot(zdens, h0dens, label='0G')
-plt.plot(zdens, h1dens, label = field1)
-plt.plot(zdens, h2dens, label = field2)
-plt.plot(zdens, h3dens, label = field3)
+plt.plot(zdens, h1dens, label = m_base1)
+plt.plot(zdens, h2dens, label = m_base2)
+plt.plot(zdens, h3dens, label = m_base3)
 ax.set_yscale('log')
 plt.legend()
 
 ##Generating absolute diff from plots
-absrange = 95
 plt.figure(num = 'diferencias absolutas')
-zabs = z[1:absrange]
-abs1 = h1[1:absrange] - h0[1:absrange]
-abs2 = h2[1:absrange] - h0[1:absrange]
-abs3 = h3[1:absrange] - h0[1:absrange]
+zabs = z[1:plot_limit]
+abs1 = h1[1:plot_limit] - h0[1:plot_limit]
+abs2 = h2[1:plot_limit] - h0[1:plot_limit]
+abs3 = h3[1:plot_limit] - h0[1:plot_limit]
 plt.xlabel('z [km]')
 plt.ylabel('Difference in H [cm-3]')
-plt.plot(zabs, abs1)
-plt.plot(zabs, abs2)
-plt.plot(zabs, abs3)
+plt.plot(zabs, abs1, label = m_base1 + ' - 0G', color='C1')
+plt.plot(zabs, abs2, label = m_base2 + ' - 0G', color='g')
+plt.plot(zabs, abs3, label = m_base3 + ' - 0G', color='r')
 ax.set_yscale('log')
 plt.legend()
 
 
 ##Generating relative plot
-relrange = 95
 plt.figure(num = 'diferencias relativas')
-zrel = z[1:absrange]
-rel1 = h1[1:relrange] - h0[1:relrange]
-rel2 = h2[1:relrange] - h1[1:relrange]
-rel3 = h3[1:relrange] - h2[1:relrange]
+zrel = z[1:plot_limit]
+rel1 = h1[1:plot_limit] - h0[1:plot_limit]
+rel2 = h2[1:plot_limit] - h1[1:plot_limit]
+rel3 = h3[1:plot_limit] - h2[1:plot_limit]
 plt.xlabel('z [km]')
 plt.ylabel('Difference in H [cm-3]')
-plt.plot(zrel, rel1)
-plt.plot(zrel, rel2)
-plt.plot(zrel, rel3)
+plt.plot(zrel, rel1, label = m_base1 + ' - 0G', color='C1')
+plt.plot(zrel, rel2, label = m_base2 + ' - ' + m_base1, color='g')
+plt.plot(zrel, rel3, label = m_base3 + ' - ' + m_base2, color='r')
 ax.set_yscale('log')
 plt.legend()
 
 
 ##Generating pressure plots
-pres_range = 110
-file0 = 'hydrostatic.dat'
-file1 = 'P_500-200.dat'
-file2 = 'P_800-200.dat'
-file3 = 'P_1000-200.dat'
-field1 = '500G'
-field2 = '100G'
-field3 = '1000G'
+file0 = '0-0/P.dat'
+file1 = m_base1 + '/P.dat'
+file2 = m_base2 + '/P.dat'
+file3 = m_base3 + '/P.dat'
 
-id1,zpres,t,p,h,v,vt = fgetcols(file0)
+zpres,pres = fgetcols(file0)
 zpres,pres1 = fgetcols(file1)
 zpres,pres2 = fgetcols(file2)
 zpres,pres3 = fgetcols(file3)
-zpres = zpres[1:pres_range]
-pres = p[1:pres_range]
-pres1 = pres1[1:pres_range]
-pres2 = pres2[1:pres_range]
-pres3 = pres3[1:pres_range]
+zpres = zpres[1:plot_limit]
+pres = pres[1:plot_limit]
+pres1 = pres1[1:plot_limit]
+pres2 = pres2[1:plot_limit]
+pres3 = pres3[1:plot_limit]
 
 figure = plt.figure(num='Presion')
 ax = figure.add_subplot(1, 1, 1)
@@ -338,23 +336,57 @@ ax = figure.add_subplot(1, 1, 1)
 plt.xlabel('z [km]')
 plt.ylabel('P [Pa]')
 plt.plot(zpres, pres, label='0G')
-plt.plot(zpres, pres1, label = field1)
-plt.plot(zpres, pres2, label = field2)
-plt.plot(zpres, pres3, label = field3)
+plt.plot(zpres, pres1, label = m_base1)
+plt.plot(zpres, pres2, label = m_base2)
+plt.plot(zpres, pres3, label = m_base3)
 ax.set_yscale('log')
 plt.legend()
 
 
 ##Generating temperature plot
-temp_range = 110
+file0 = '0-0/T.dat'
+
+z,T = fgetcols(file0)
+z = z[1:plot_limit]
+T = T[1:plot_limit]
+
 figure = plt.figure(num='Temperatura')
 ax = figure.add_subplot(1, 1, 1)
 plt.xlabel('z [km]')
 plt.ylabel('T [k]')
-ztemp = z[1:temp_range]
-t = t[1:temp_range]
-plt.plot(ztemp, t)
+plt.plot(z, T)
 ax.set_yscale('log')
+
+
+##Generating magnetic plots
+file0 = '0-0/magnetic.dat'
+file1 = m_base1 + '/magnetic.dat'
+file2 = m_base2 + '/magnetic.dat'
+file3 = m_base3 + '/magnetic.dat'
+
+zm,magnetic0 = fgetcols(file0)
+zm,magnetic1 = fgetcols(file1)
+zm,magnetic2 = fgetcols(file2)
+zm,magnetic3 = fgetcols(file3)
+zm = z
+magnetic0 = magnetic0[1:plot_limit]
+magnetic1 = magnetic1[1:plot_limit]
+magnetic2 = magnetic2[1:plot_limit]
+magnetic3 = magnetic3[1:plot_limit]
+
+figure = plt.figure(num='Campo Magnetico')
+ax = figure.add_subplot(1, 1, 1)
+
+plt.xlabel('z [km]')
+plt.ylabel('P [Pa]')
+#plt.plot(zm, magnetic0, label='0G')
+plt.plot(zm, magnetic1, label = m_base1, color='C1')
+plt.plot(zm, magnetic2, label = m_base2, color='g')
+plt.plot(zm, magnetic3, label = m_base3, color='r')
+#ax.set_yscale('log')
+plt.legend()
+
+
 
 ##plot everything
 plt.show()
